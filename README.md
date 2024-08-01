@@ -2,6 +2,8 @@
 
 Um aplicativo de lista de tarefas simples e eficiente, desenvolvido com React, TypeScript e Chakra UI. Este projeto visa fornecer uma interface de usuário intuitiva e moderna para gerenciar tarefas diárias.
 
+#### Link: https://to-do-list-9u2a99yoc-danicaldas-projects-6f8e6707.vercel.app/
+
 ## Sumário
 
 - [Instalação](#instalação)
