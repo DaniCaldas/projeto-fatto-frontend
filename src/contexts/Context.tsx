@@ -3,19 +3,18 @@ import axios from "axios";
 
 interface ContextTypes{
     tarefas: TarefasTypes[];
-    status: number;
-    AddTarefa: (titulo: string, descricao: string) => void;
-    EditTarefa: (titulo: string, descricao: string, id: number) => void;
+    AddTarefa: (titulo: string, dataLimite: string, custo: string) => void;
+    EditTarefa: (titulo: string, dataLimite: string, custo: string, id: number) => void;
     DeletarTarefa: (id: number) => void;
     DeletarTudo: () => void;
-    MudarEstadoTarefa: (status: string, id: number) => void
 }
 
 interface TarefasTypes{
     id: number;
     titulo: string;
-    descricao: string;
-    status: string;
+    custo: string;
+    dataLimite: string;
+    ordem: number;
 }
 
 interface DefaultTypes{
@@ -24,50 +23,38 @@ interface DefaultTypes{
 
 export const context = createContext({} as ContextTypes);
 
-const api = "https://deplou-crud-springboot.onrender.com/lista";
+const api = "http://localhost:8000";
 
 export default function Context({children}: DefaultTypes){
     
     const [tarefas, setTarefas] = useState<TarefasTypes[]>([]);
-    const [status, setStatus] = useState(Number);
 
     const DeletarTudo = () => {
-        axios.delete(`${api}/DeletarTudo`)
+        axios.delete(`${api}/limpar`)
         .then(() => console.log('Tudo Limpo'))
         .catch((error) => console.log(error))
     }
     
     const DeletarTarefa = async (id: number) => {
-        await axios.delete(`${api}/deletar`,{
-            data:{
-                id: id
-            }
-        })
+        await axios.delete(`${api}/tarefas/${id}`)
         .catch((error) => console.log(error))
     }
    
-    const EditTarefa = async (titulo: string, descricao: string, id: number) => {
-        await axios.put(`${api}`, {
+    const EditTarefa = async (titulo: string, dataLimite: string, custo: string, id: number) => {
+        await axios.patch(`${api}/tarefas/${id}`, { 
             id: id,
             titulo: titulo,
-            descricao: descricao
+            dataLimite: new Date(dataLimite).toISOString(),
+            custo: custo
         })
         .catch((error) => console.log(error))
     }
 
-    const MudarEstadoTarefa = async (status: string, id: number) => {
-        await axios.put(api, {
-            id: id,
-            status: status
-        })
-        .catch((error) => console.log(error))
-    }   
-
-    const AddTarefa = async (titulo: string, descricao: string) => {
+    const AddTarefa = async (titulo: string, dataLimite: string, custo: string) => {
         await axios.post(`${api}/tarefas`, {
           titulo: titulo,
-          descricao: descricao,
-          status: "PENDENTE"
+          dataLimite:new Date(dataLimite).toISOString(),
+          custo: custo
         })
         .catch((error) => console.log(error))
     }
@@ -76,13 +63,12 @@ export default function Context({children}: DefaultTypes){
         axios.get(`${api}/tarefas`)
         .then((response) => {
             setTarefas(response.data);
-            setStatus(response.status);
         })
         .catch((error) => console.log(error))
-    },[tarefas, AddTarefa, EditTarefa, DeletarTarefa, DeletarTudo, MudarEstadoTarefa ])
+    },[tarefas, AddTarefa, EditTarefa, DeletarTarefa, DeletarTudo])
 
     return(
-        <context.Provider value={{tarefas, status, AddTarefa, EditTarefa, DeletarTarefa, DeletarTudo, MudarEstadoTarefa}}>
+        <context.Provider value={{tarefas, AddTarefa, EditTarefa, DeletarTarefa, DeletarTudo }}>
             {children}
         </context.Provider>
     )
