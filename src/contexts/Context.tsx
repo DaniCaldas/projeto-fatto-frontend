@@ -23,7 +23,7 @@ interface DefaultTypes{
 
 export const context = createContext({} as ContextTypes);
 
-const api = "http://localhost:8000";
+const api = "https://projeto-factto-backend.onrender.com/tarefas";
 
 export default function Context({children}: DefaultTypes){
     
